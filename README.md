@@ -1,4 +1,7 @@
 # Kijiji-Web-Scraper
 Trying to find a room within a price range but kijiji has no filters for that.
 
-Currently prints output to console.
+Landing page displays the first page of search results. 
+To do:
+  -Add controls
+  -Make it look prettier
