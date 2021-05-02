@@ -1,0 +1,17 @@
+.info{
+    border: 1px solid gray;
+    background-color: aliceblue;
+}
+
+.price{
+    color: greenyellow;
+    font-size: larger;
+}
+
+.title{
+    font-size: larger;
+}
+
+.distance{
+    font-size: large;
+}

@@ -2,9 +2,20 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Flask Tutorial</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/stylesheet.css')}}">
+    <title>Kijiji Rooms</title>
   </head>
   <body>
-    <h1> My First Try Using Flask </h1>
+    <h1> Kijiji Rooms </h1>
+    {% for room in rooms %}
+    <a href="https://kijiji.ca{{room.link}}">
+        <div class="info">
+            <p class="price"> {{room.price}} </p>
+            <p class="title"> {{room.title}} </p>
+            <p class="distance"> {{room.distance}} </p>
+            <img src="{{room.imageUrl}}">
+        </div>
+    </a>
+    {% endfor %}
   </body>
 </html>

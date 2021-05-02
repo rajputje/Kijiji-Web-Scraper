@@ -1,4 +1,5 @@
 import requests
+import re
 
 from bs4 import BeautifulSoup
 
@@ -16,7 +17,7 @@ response = requests.get(url)
 html = BeautifulSoup(response.text, 'html.parser')
 
 
-infoList = html.findAll('div', class_='info')
+infoList = html.findAll('div', class_='search-item')
 
 class Room:
     price = ''
@@ -24,6 +25,7 @@ class Room:
 
     link = ''
     distance = ''
+    imageUrl = ''
 
 rooms = []
 
@@ -33,7 +35,7 @@ for info in infoList:
 
     room.price = info.find('div', class_='price').string.strip()
 
-    if room.price != 'Please Contact':
+    if re.search('[a-zA-Z]', room.price) == None:
 
         priceFloat = float(room.price.strip('$').replace(',', ''))
 
@@ -45,6 +47,8 @@ for info in infoList:
     room.link = info.find('a', class_='title').get('href')
 
     room.distance = info.find('div', class_='distance').string.strip()
-
-    print(room.__dict__)
+    room.imageUrl = info.find('img').get('data-src', None)
+    if room.imageUrl == None:
+        room.imageUrl = info.find('img')['src']
+        
     rooms.append(room)
