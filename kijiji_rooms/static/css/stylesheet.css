@@ -1,0 +1,13 @@
+.card{
+    width: 18rem; 
+    height: 25rem;
+}
+
+.image-container{
+    max-height: 50%; 
+    overflow: hidden;
+}
+
+.heading{
+    text-align: center;
+}
