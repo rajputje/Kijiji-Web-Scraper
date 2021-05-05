@@ -1,19 +1,42 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 import kijiji_web_scraper
 
 
 app = Flask(__name__)
 
+DEF_MIN_PRICE = 450
+DEF_MAX_PRICE = 700
+DEF_DISTANCE = 10
+
+currMinPrice = DEF_MIN_PRICE
+currMaxPrice = DEF_MAX_PRICE
+currDistance = DEF_DISTANCE
 
 @app.route("/")
 @app.route("/<pageNum>")
 
 def home(pageNum = 1):
 
-    rooms = kijiji_web_scraper.searchRooms(pageNum)
+    global currMinPrice
+    global currMaxPrice
+    global currDistance
 
-    return render_template("home.html", pageNum = pageNum, rooms = rooms)
+    minPrice = request.args.get("min_price")
+    maxPrice = request.args.get("max_price")
+    distance = request.args.get("distance")
+
+    minPrice = currMinPrice if minPrice == "" or minPrice is None else float(minPrice)
+    maxPrice = currMaxPrice if maxPrice == "" or maxPrice is None else float(maxPrice)
+    distance = currDistance if distance == "" or distance is None else float(distance)
+
+    currMinPrice = minPrice
+    currMaxPrice = maxPrice
+    currDistance = distance
+
+    rooms = kijiji_web_scraper.searchRooms(pageNum, minPrice, maxPrice, distance)
+
+    return render_template("home.html", pageNum = pageNum, rooms = rooms, minPrice = minPrice, maxPrice = maxPrice, distance = distance)
 
 
 if __name__ == "__main__":

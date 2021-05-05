@@ -11,3 +11,11 @@
 .heading{
     text-align: center;
 }
+
+.heading>a{
+    text-decoration: none;
+}
+
+.heading>a:hover{
+    text-decoration: underline;
+}
