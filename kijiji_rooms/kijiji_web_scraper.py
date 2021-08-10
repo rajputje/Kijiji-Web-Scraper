@@ -14,11 +14,7 @@ class Room:
 
 def searchRooms(pageNum, minPrice, maxPrice, distance):
 
-    print("Min: " + str(minPrice))
-    print("Max: " + str(maxPrice))
-    print("Dis: " + str(distance))
-
-    url='https://www.kijiji.ca/b-for-rent/mississauga-peel-region/room/page-' + str(pageNum) + '/k0c30349001l1700276?rb=true&ll=43.733835%2C-79.823181&address=11965+Hurontario+Street%2C+Brampton%2C+ON&ad=offering&radius=' + str(distance) + '&dc=true'
+    url= getUrl(str(pageNum), str(distance))
     response = requests.get(url)
 
     html = BeautifulSoup(response.text, 'html.parser')
@@ -35,7 +31,7 @@ def searchRooms(pageNum, minPrice, maxPrice, distance):
         except:
             print(url)
 
-        if re.search('[a-zA-Z]', room.price) == None:
+        if re.search('[a-zA-Z]', room.price) == None:   #if it actually has a price and not "Please Contact"
 
             priceFloat = float(room.price.strip('$').replace(',', ''))
 
@@ -53,3 +49,8 @@ def searchRooms(pageNum, minPrice, maxPrice, distance):
         rooms.append(room)
 
     return rooms
+
+def getUrl(pageNum, distance):
+    return 'https://www.kijiji.ca/b-for-rent/mississauga-peel-region/room/page-' + pageNum \
+        + '/k0c30349001l1700276?' \
+        +'&address=Deerfield+Drive%2C+Nepean%2C+ON&ad=offering&radius=' + distance + '&dc=true'
