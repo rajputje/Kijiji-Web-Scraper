@@ -1,7 +1,2 @@
 # Kijiji-Web-Scraper
-Trying to find a room within a price range but kijiji has no filters for that.
-
-Landing page displays the first page of search results. 
-To do:
-  -Add controls
-  -Make it look prettier
+A web app where you can look for apartments from kijiji.ca with much less scrolling.
