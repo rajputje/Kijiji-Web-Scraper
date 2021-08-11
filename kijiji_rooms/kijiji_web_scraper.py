@@ -12,9 +12,9 @@ class Room:
 
     imageUrl = ''
 
-def searchRooms(pageNum, minPrice, maxPrice, distance):
+def searchRooms(pageNum, minPrice, maxPrice, distance, location):
 
-    url= getUrl(str(pageNum), str(distance))
+    url= getUrl(str(pageNum), str(distance), str(location))
     response = requests.get(url)
 
     html = BeautifulSoup(response.text, 'html.parser')
@@ -50,7 +50,7 @@ def searchRooms(pageNum, minPrice, maxPrice, distance):
 
     return rooms
 
-def getUrl(pageNum, distance):
+def getUrl(pageNum, distance, location):
     return 'https://www.kijiji.ca/b-for-rent/mississauga-peel-region/room/page-' + pageNum \
         + '/k0c30349001l1700276?' \
-        +'&address=Deerfield+Drive%2C+Nepean%2C+ON&ad=offering&radius=' + distance + '&dc=true'
+        +'&address=' + location + '&ad=offering&radius=' + distance + '&dc=true'
