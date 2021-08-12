@@ -1,14 +1,23 @@
 from flask import Flask, render_template, request
+import json
 
 import kijiji_web_scraper
 
-
 app = Flask(__name__)
+
+#get api key from json file
+with open("kijiji_rooms\\keys\\api_keys.json") as api_keys:
+    api_key_dict = json.loads(api_keys.read())
+
+#injecting api key to the template
+@app.context_processor
+def maps_api_key():
+    return dict(API_KEY=api_key_dict["API_KEY"])
 
 DEF_MIN_PRICE = 450
 DEF_MAX_PRICE = 700
 DEF_DISTANCE = 10
-DEF_LOCATION = 'Deerfield+Drive%2C+Nepean%2C+ON'
+DEF_LOCATION = 'Deerfield Drive, Nepean, ON'
 
 currMinPrice = DEF_MIN_PRICE
 currMaxPrice = DEF_MAX_PRICE
@@ -33,6 +42,7 @@ def home(pageNum = 1):
     minPrice = currMinPrice if minPrice == "" or minPrice is None else float(minPrice)
     maxPrice = currMaxPrice if maxPrice == "" or maxPrice is None else float(maxPrice)
     distance = currDistance if distance == "" or distance is None else float(distance)
+    location = currLocation if location == "" or location is None else location
 
     currMinPrice = minPrice
     currMaxPrice = maxPrice

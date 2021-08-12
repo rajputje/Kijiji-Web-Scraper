@@ -14,20 +14,24 @@ class Room:
 
 def searchRooms(pageNum, minPrice, maxPrice, distance, location):
 
-    url= getUrl(str(pageNum), str(distance), str(location))
+    #prepare url for kijiji and send request
+    url= toUrl(str(pageNum), str(distance), str(location))
     response = requests.get(url)
 
+    #get response and store it in a data structure
     html = BeautifulSoup(response.text, 'html.parser')
-    infoList = html.findAll('div', class_='search-item')
+    
+    searchItems = html.findAll('div', class_='search-item')
 
     rooms = []
 
-    for info in infoList:
+    #get all the relevant data and store it in a 'rooms' list
+    for item in searchItems:
 
         room = Room()
 
         try:
-            room.price = info.find('div', class_='price').text.strip()
+            room.price = item.find('div', class_='price').text.strip()
         except:
             print(url)
 
@@ -38,19 +42,19 @@ def searchRooms(pageNum, minPrice, maxPrice, distance, location):
             if not(minPrice <= priceFloat <= maxPrice):
                 continue
 
-        room.title = info.find('a', class_='title').string.strip()
-        room.link = info.find('a', class_='title').get('href')
-        room.distance = info.find('div', class_='distance').string.strip()
-        room.imageUrl = info.find('img').get('data-src', None)
+        room.title = item.find('a', class_='title').string.strip()
+        room.link = item.find('a', class_='title').get('href')
+        room.distance = item.find('div', class_='distance').string.strip()
+        room.imageUrl = item.find('img').get('data-src', None)
 
         if room.imageUrl == None:
-            room.imageUrl = info.find('img')['src']
+            room.imageUrl = item.find('img')['src']
             
         rooms.append(room)
 
     return rooms
 
-def getUrl(pageNum, distance, location):
+def toUrl(pageNum, distance, location):
     return 'https://www.kijiji.ca/b-for-rent/mississauga-peel-region/room/page-' + pageNum \
         + '/k0c30349001l1700276?' \
         +'&address=' + location + '&ad=offering&radius=' + distance + '&dc=true'
