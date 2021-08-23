@@ -12,10 +12,22 @@ class Room:
 
     imageUrl = ''
 
-def searchRooms(pageNum, minPrice, maxPrice, distance, location):
+class SearchVariables:
+    minPrice = 0
+    maxPrice = 0
+    distance = 0
+    location = ''
+
+    def __init__(self, minPrice=0, maxPrice=0, distance=0, location=''):
+        self.minPrice = minPrice
+        self.maxPrice = maxPrice
+        self.distance = distance
+        self.location = location
+
+def searchRooms(pageNum, searchVars: SearchVariables):
 
     #prepare url for kijiji and send request
-    url= toUrl(str(pageNum), str(distance), str(location))
+    url= toUrl(str(pageNum), str(searchVars.distance), str(searchVars.location))
     response = requests.get(url)
 
     #get response and store it in a data structure
@@ -39,7 +51,7 @@ def searchRooms(pageNum, minPrice, maxPrice, distance, location):
 
             priceFloat = float(room.price.strip('$').replace(',', ''))
 
-            if not(minPrice <= priceFloat <= maxPrice):
+            if not(searchVars.minPrice <= priceFloat <= searchVars.maxPrice):
                 continue
 
         room.title = item.find('a', class_='title').string.strip()
