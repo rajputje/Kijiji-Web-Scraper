@@ -1,10 +1,14 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
+
 import json
 import os
 
 import kijiji_web_scraper
+from kijiji_web_scraper import SearchVariables
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config['SECRET_KEY'] = os.urandom(24)
 
 #get api key from json file
 with open("./keys/api_keys.json") as api_keys:
@@ -20,40 +24,45 @@ DEF_MAX_PRICE = 700
 DEF_DISTANCE = 10
 DEF_LOCATION = 'Deerfield Drive, Nepean, ON'
 
-currMinPrice = DEF_MIN_PRICE
-currMaxPrice = DEF_MAX_PRICE
-currDistance = DEF_DISTANCE
-currLocation = DEF_LOCATION
-
 @app.route("/")
 @app.route("/<pageNum>")
 
 def home(pageNum = 1):
+    
+    if session.get('session_exists') == None:
+        _setSessionSearchVars(DEF_MIN_PRICE, DEF_MAX_PRICE, DEF_DISTANCE, DEF_LOCATION)
+        session['session_exists'] = True
+        searchVars = SearchVariables(session['minPrice'], session['maxPrice'], session['distance'], session['location'])
+    else:
+        searchVars = _getInputSearchVars(request.args)        
+        _setSessionSearchVars(searchVars.minPrice, searchVars.maxPrice, searchVars.distance, searchVars.location)
 
-    global currMinPrice
-    global currMaxPrice
-    global currDistance
-    global currLocation
+    rooms = kijiji_web_scraper.searchRooms(pageNum, searchVars)
 
-    minPrice = request.args.get("min_price")
-    maxPrice = request.args.get("max_price")
-    distance = request.args.get("distance")
-    location = request.args.get("location")
+    return render_template("home.html", pageNum = pageNum, rooms = rooms, minPrice = searchVars.minPrice,\
+                        maxPrice = searchVars.maxPrice, distance = searchVars.distance, location = searchVars.location)
 
-    minPrice = currMinPrice if minPrice == "" or minPrice is None else float(minPrice)
-    maxPrice = currMaxPrice if maxPrice == "" or maxPrice is None else float(maxPrice)
-    distance = currDistance if distance == "" or distance is None else float(distance)
-    location = currLocation if location == "" or location is None else location
+def _getInputSearchVars(requestArgs: dict) -> SearchVariables:
+    
+    minPrice = requestArgs.get("min_price")
+    maxPrice = requestArgs.get("max_price")
+    distance = requestArgs.get("distance")
+    location = requestArgs.get("location")
 
-    currMinPrice = minPrice
-    currMaxPrice = maxPrice
-    currDistance = distance
-    currLocation = location
+    sv = SearchVariables()
+    sv.minPrice = session['minPrice'] if minPrice == "" or minPrice is None else float(minPrice)
+    sv.maxPrice = session['maxPrice'] if maxPrice == "" or maxPrice is None else float(maxPrice)
+    sv.distance = session['distance'] if distance == "" or distance is None else float(distance)
+    sv.location = session['location'] if location == "" or location is None else location
 
-    rooms = kijiji_web_scraper.searchRooms(pageNum, minPrice, maxPrice, distance, location)
+    return sv
 
-    return render_template("home.html", pageNum = pageNum, rooms = rooms, minPrice = minPrice, maxPrice = maxPrice,\
-         distance = distance, location = location)
+def _setSessionSearchVars(minPrice: float, maxPrice: float, distance: float, location: str):
+    
+    session['minPrice'] = minPrice
+    session['maxPrice'] = maxPrice
+    session['distance'] = distance
+    session['location'] = location
 
 if __name__ == "__main__":
 
