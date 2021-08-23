@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request
 import json
+import os
 
 import kijiji_web_scraper
 
 app = Flask(__name__)
 
 #get api key from json file
-with open("kijiji_rooms\\keys\\api_keys.json") as api_keys:
+with open("./keys/api_keys.json") as api_keys:
     api_key_dict = json.loads(api_keys.read())
 
 #injecting api key to the template
@@ -56,4 +57,4 @@ def home(pageNum = 1):
 
 if __name__ == "__main__":
 
-    app.run(debug=True)
+    app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
