@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/stylesheet.css')}}">
 
     <script src="{{url_for('static', filename='js/autocomplete.js')}}" defer></script>
-    <script async
-      src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places&callback=initAutoComplete">
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places&callback=initAutoComplete" defer>
     </script>
     <script src="{{url_for('static', filename='js/pagination.js')}}"></script>
 
