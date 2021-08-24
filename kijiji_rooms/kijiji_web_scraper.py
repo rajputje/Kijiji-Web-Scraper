@@ -45,7 +45,8 @@ def searchRooms(pageNum, searchVars: SearchVariables):
         try:
             room.price = item.find('div', class_='price').text.strip()
         except:
-            print(url)
+            print("Failed to find and strip div of class price in the following item" + item)
+            room.price = 'N/A'
 
         if re.search('[a-zA-Z]', room.price) == None:   #if it actually has a price and not "Please Contact"
 
