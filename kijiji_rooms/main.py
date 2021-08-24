@@ -29,13 +29,16 @@ DEF_LOCATION = 'Deerfield Drive, Nepean, ON'
 
 def home(pageNum = 1):
     
+    #if this is a new session, set default values
     if session.get('session_exists') == None:
-        _setSessionSearchVars(DEF_MIN_PRICE, DEF_MAX_PRICE, DEF_DISTANCE, DEF_LOCATION)
         session['session_exists'] = True
-        searchVars = SearchVariables(session['minPrice'], session['maxPrice'], session['distance'], session['location'])
+        searchVars = SearchVariables(DEF_MIN_PRICE, DEF_MAX_PRICE, DEF_DISTANCE, DEF_LOCATION)
+    #else get values from input fields and session variables
     else:
         searchVars = _getInputSearchVars(request.args)        
-        _setSessionSearchVars(searchVars.minPrice, searchVars.maxPrice, searchVars.distance, searchVars.location)
+    
+    #update session variables
+    _setSessionSearchVars(searchVars.minPrice, searchVars.maxPrice, searchVars.distance, searchVars.location) 
 
     rooms = kijiji_web_scraper.searchRooms(pageNum, searchVars)
 
