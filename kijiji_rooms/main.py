@@ -46,7 +46,10 @@ def home(pageNum = 1):
                         maxPrice = searchVars.maxPrice, distance = searchVars.distance, location = searchVars.location)
 
 def _getInputSearchVars(requestArgs: dict) -> SearchVariables:
-    
+    '''
+    Get variables from input fields in the html file. Gives previously set values if input field is empty.
+    '''
+
     minPrice = requestArgs.get("min_price")
     maxPrice = requestArgs.get("max_price")
     distance = requestArgs.get("distance")
@@ -61,7 +64,9 @@ def _getInputSearchVars(requestArgs: dict) -> SearchVariables:
     return sv
 
 def _setSessionSearchVars(minPrice: float, maxPrice: float, distance: float, location: str):
-    
+    '''
+    Set search variables stored in session
+    '''
     session['minPrice'] = minPrice
     session['maxPrice'] = maxPrice
     session['distance'] = distance
