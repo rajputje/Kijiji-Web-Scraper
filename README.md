@@ -1,5 +1,4 @@
 # Kijiji-Web-Scraper
-A web app where you can look for apartments from kijiji.ca with much less scrolling.
 
 ## To launch
 1. Install all the requirements from requirements.txt
