@@ -19,6 +19,18 @@
     text-decoration: underline;
 }
 
+.col-md-2{
+    min-width: 10rem;
+}
+
+.col-md-4{
+    min-width: 10rem;
+}
+
+.col-md-1{
+    min-width: 5rem;
+}
+
 @media screen and (max-width: 800px) {
     .card{
         width: 14rem; 
