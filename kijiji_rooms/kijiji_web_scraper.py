@@ -1,5 +1,4 @@
 import requests
-import re
 
 from bs4 import BeautifulSoup
 
@@ -13,21 +12,25 @@ class Room:
     imageUrl = ''
 
 class SearchVariables:
+    minPriceEnabled = True
+    maxPriceEnabled = True
     minPrice = 0
     maxPrice = 0
     distance = 0
     location = ''
 
-    def __init__(self, minPrice=0, maxPrice=0, distance=0, location=''):
+    def __init__(self, minPrice=0, maxPrice=0, minPriceEnabled = True, maxPriceEnabled = True, distance=0, location=''):
         self.minPrice = minPrice
         self.maxPrice = maxPrice
+        self.minPriceEnabled = minPriceEnabled
+        self.maxPriceEnabled = maxPriceEnabled
         self.distance = distance
         self.location = location
 
 def searchRooms(pageNum, searchVars: SearchVariables):
 
     #prepare url for kijiji and send request
-    url= toUrl(str(pageNum), str(searchVars.distance), str(searchVars.location))
+    url= toUrl(str(pageNum), searchVars)
     response = requests.get(url)
 
     #get response and store it in a data structure
@@ -48,13 +51,6 @@ def searchRooms(pageNum, searchVars: SearchVariables):
             print("Failed to find and strip div of class price in the following item" + item)
             room.price = 'N/A'
 
-        if re.search('[a-zA-Z]', room.price) == None:   #if it actually has a price and not "Please Contact"
-
-            priceFloat = float(room.price.strip('$').replace(',', ''))
-
-            if not(searchVars.minPrice <= priceFloat <= searchVars.maxPrice):
-                continue
-
         room.title = item.find('a', class_='title').string.strip()
         room.link = item.find('a', class_='title').get('href')
         room.distance = item.find('div', class_='distance').string.strip()
@@ -67,7 +63,14 @@ def searchRooms(pageNum, searchVars: SearchVariables):
 
     return rooms
 
-def toUrl(pageNum, distance, location):
-    return 'https://www.kijiji.ca/b-for-rent/mississauga-peel-region/room/page-' + pageNum \
-        + '/k0c30349001l1700276?' \
-        +'&address=' + location + '&ad=offering&radius=' + distance + '&dc=true'
+def toUrl(pageNum, searchVars):
+    if(searchVars.minPriceEnabled or searchVars.maxPriceEnabled):
+        minPrice = str(searchVars.minPrice) if searchVars.minPriceEnabled else ""
+        maxPrice = str(searchVars.maxPrice) if searchVars.maxPriceEnabled else ""
+        priceArg = '&price=' + minPrice + '__' + maxPrice
+    else:
+        priceArg = ''
+    
+    return 'https://www.kijiji.ca/b-for-rent/mississauga-peel-region/room/page-' + str(pageNum) \
+        + '/k0c30349001l1700276?' + '&address=' + str(searchVars.location) + '&ad=offering&radius=' + str(searchVars.distance) \
+             + '&dc=true' + priceArg
